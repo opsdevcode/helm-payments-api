@@ -1,0 +1,23 @@
+replicaCount: 1
+
+owner: platform
+serviceName: payments-api
+environment: dev
+costCenter: ""
+
+image:
+  repository: ghcr.io/opsdevcode/payments-api
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+
+ingress:
+  enabled: false
+  host: ""
+
+
+resources: {}

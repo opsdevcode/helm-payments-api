@@ -1,0 +1,56 @@
+---
+apiVersion: repave.dev/v1beta1
+kind: GoldenPathArtifact
+metadata:
+  name: payments-api
+spec:
+  artifactType: helm-chart
+  helmChart:
+    chart_name: payments-api
+    app_name: payments-api
+    image_repository: ghcr.io/opsdevcode/payments-api
+    image_tag: 1.0.0
+    service_type: ClusterIP
+    enable_ingress: 'false'
+  governance:
+    baseline_source: standards/policy/governance-baseline.md
+    baseline_version: 1.0.0
+  blueprint:
+    name: helm-chart-generic
+    version: 0.3.1
+  standard:
+    source: standards/helm/chart-standard.md
+    version: 1.0.0
+  generation:
+    engine_version: 2.34.0
+    generated_at: '2026-08-07T04:42:22+00:00'
+  ci:
+    workflow: .github/workflows/repave-gates.yml
+    toolchain:
+      terraform: 1.9.8
+      tflint: 0.55.1
+      checkov: checkov==3.2.366
+    gate_config:
+      yamllint:
+        paths:
+          - Chart.yaml
+          - values.yaml
+      helm-lint:
+        chart_path: .
+      helm-template:
+        chart_path: .
+        release_name: repave-test
+      opa:
+        policies_dir: policy/opa/policies
+        fixtures_dir: tests/fixtures
+        plan_subdir: .repave
+        helm_release_name: repave-test
+    gates:
+      - yamllint
+      - helm-lint
+      - helm-template
+      - opa
+      - actionlint
+      - secrets
+      - docs-drift
+      - provenance-drift
